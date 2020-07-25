@@ -1,0 +1,3 @@
+include ':malshinun-crashes'
+include ':app'
+rootProject.name = "MalshinunCrashesExample"
