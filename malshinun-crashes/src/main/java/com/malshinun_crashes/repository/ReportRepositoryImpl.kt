@@ -1,7 +1,7 @@
 package com.malshinun_crashes.repository
 
 import android.content.Context
-import com.malshinun_crashes.Utils.SDK_PACKAGE_NAME
+import com.malshinun_crashes.Consts.SDK_PACKAGE_NAME
 import com.malshinun_crashes.model.Report
 
 internal class ReportRepositoryImpl(context: Context) :

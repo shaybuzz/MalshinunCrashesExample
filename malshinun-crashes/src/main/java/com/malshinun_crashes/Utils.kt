@@ -5,9 +5,6 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 
 internal object Utils {
-    const val ONE_MINUTE = 60000L
-    const val SDK_PACKAGE_NAME = "com.malshinun_crashes"
-    const val DEFAULT_HANDLER_PACKAGE_NAME = "com.android.internal.os"
 
     fun getPackage(context: Context):String{
         return context.applicationContext.packageName

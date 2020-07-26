@@ -3,9 +3,9 @@ package com.malshinun_crashes
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import com.malshinun_crashes.Utils.DEFAULT_HANDLER_PACKAGE_NAME
-import com.malshinun_crashes.Utils.ONE_MINUTE
-import com.malshinun_crashes.Utils.SDK_PACKAGE_NAME
+import com.malshinun_crashes.Consts.DEFAULT_OS_HANDLER_PKG_NAME
+import com.malshinun_crashes.Consts.ONE_MINUTE
+import com.malshinun_crashes.Consts.SDK_PACKAGE_NAME
 import com.malshinun_crashes.model.Report
 import com.malshinun_crashes.remote.Network
 import com.malshinun_crashes.repository.ReportRepository
@@ -32,7 +32,7 @@ class MalshinunCrashes(private val context: Context) {
                 Log.d(TAG, "sdk handler")
 
             } else if (oldHandler != null && oldHandler!!.javaClass.name.startsWith(
-                    DEFAULT_HANDLER_PACKAGE_NAME
+                    DEFAULT_OS_HANDLER_PKG_NAME
                 )
             ) {
                 //android os default handler
