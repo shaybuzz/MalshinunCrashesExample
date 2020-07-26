@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 
 internal object Utils {
     const val ONE_MINUTE = 60000L
-    const val SDK_PACKAGE_NAME = "com.tut.mycarshreporterplayground"
+    const val SDK_PACKAGE_NAME = "com.malshinun_crashes"
     const val DEFAULT_HANDLER_PACKAGE_NAME = "com.android.internal.os"
 
     fun getPackage(context: Context):String{
@@ -24,5 +24,4 @@ internal object Utils {
     fun getPackageInfo(context: Context): PackageInfo? {
         return context.applicationContext.packageManager.getPackageInfo(getPackage(context), 0)
     }
-
 }

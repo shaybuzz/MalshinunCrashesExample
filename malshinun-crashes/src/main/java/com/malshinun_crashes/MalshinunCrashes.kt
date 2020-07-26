@@ -16,7 +16,7 @@ class MalshinunCrashes(private val context: Context) {
     private val TAG = MalshinunCrashes::class.java.simpleName
 
     private var oldHandler: Thread.UncaughtExceptionHandler? = null
-    private val reportApi = Network().reportApi
+    private val reportApi = Network.reportApi
     private val reportRepository: ReportRepository = ReportRepositoryImpl(context)
     private val senderManger = SenderManger(context, reportApi, reportRepository, ONE_MINUTE)
     private val appLifeCycleHandler: AppLifeCycleHandler = AppLifeCycleHandler { isOnForeground ->

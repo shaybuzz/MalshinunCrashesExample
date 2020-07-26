@@ -21,6 +21,7 @@ internal data class Report(val time: String, val stackTrace: String) {
     }
 }
 
+//General data about the device and the hosting app
 internal data class MiscData(
     val packageName: String,
     val appVersion: String,

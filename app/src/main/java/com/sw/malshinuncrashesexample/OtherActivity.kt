@@ -2,6 +2,7 @@ package com.sw.malshinuncrashesexample
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.other_activity.*
 import java.lang.IllegalStateException
@@ -27,8 +28,9 @@ class OtherActivity : AppCompatActivity() {
 
         btnCatchException.setOnClickListener {
             try {
-                throw IllegalArgumentException("no argument")
+                throw IllegalArgumentException("Argument not valid")
             }catch (exception:IllegalArgumentException){
+                Toast.makeText(this, "caught exception ${exception.message}", Toast.LENGTH_SHORT).show()
                 Log.e("OtherActivity", "caught exception ${exception.message} $exception")
             }
         }

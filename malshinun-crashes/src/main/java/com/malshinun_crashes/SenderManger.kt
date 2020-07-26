@@ -41,11 +41,10 @@ internal class SenderManger(
     private fun sendReport() {
         val report = reportRepository.getReport()
         report?.let { lastReport ->
-            //init misc data only before sending to server - no need to save/load such data in the repository
+            //init misc data and add it to report - this is done only before sending report to server
+            //- no need to save/load such data in the repository
             lastReport.miscData =
-                MiscData(
-                    Utils.getPackage(context), Utils.getVersionName(context)
-                )
+                MiscData(Utils.getPackage(context), Utils.getVersionName(context))
             try {
                 Log.d(TAG, "####\n\nfound crash report to send $report\n\n####")
                 reportApi.sendReport(lastReport).enqueue(object : Callback<ReportResponse> {
@@ -60,7 +59,7 @@ internal class SenderManger(
                         if (response.isSuccessful) {
                             response.body()?.let {
                                 if (it.success) {
-                                    //after sending the report to the server we can remove it from our local store
+                                    //after sending the report to the server we can remove it from our local repository
                                     reportRepository.delete(lastReport)
                                 } else {
                                     Log.e(
