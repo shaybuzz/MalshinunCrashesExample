@@ -6,6 +6,7 @@ import android.util.Log
 import com.malshinun_crashes.Consts.DEFAULT_OS_HANDLER_PKG_NAME
 import com.malshinun_crashes.Consts.ONE_MINUTE
 import com.malshinun_crashes.Consts.SDK_PACKAGE_NAME
+import com.malshinun_crashes.model.MiscData
 import com.malshinun_crashes.model.Report
 import com.malshinun_crashes.remote.Network
 import com.malshinun_crashes.repository.ReportRepository
@@ -18,7 +19,8 @@ class MalshinunCrashes(private val context: Context) {
     private var oldHandler: Thread.UncaughtExceptionHandler? = null
     private val reportApi = Network.reportApi
     private val reportRepository: ReportRepository = ReportRepositoryImpl(context)
-    private val senderManger = SenderManger(context, reportApi, reportRepository, ONE_MINUTE)
+    private val miscData = MiscData(Utils.getPackage(context), Utils.getVersionName(context))
+    private val senderManger = SenderManger(reportApi, reportRepository, miscData, ONE_MINUTE)
     private val appLifeCycleHandler: AppLifeCycleHandler = AppLifeCycleHandler { isOnForeground ->
         senderManger.reporting(isOnForeground)
     }

@@ -1,6 +1,5 @@
 package com.malshinun_crashes
 
-import android.content.Context
 import android.os.Handler
 import android.util.Log
 import com.malshinun_crashes.model.MiscData
@@ -10,9 +9,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 internal class SenderManger(
-    private val context: Context,
     private val reportApi: ReportApi,
     private val reportRepository: ReportRepository,
+    private val miscData: MiscData,
     private val interval: Long
 ) : Runnable {
     private val TAG = SenderManger::class.java.simpleName
@@ -39,14 +38,13 @@ internal class SenderManger(
         }
     }
 
-    private fun sendReportTask() {
+    fun sendReportTask() {
         val report = reportRepository.getReport()
         report?.let { lastReport ->
             try {
-                //init misc data and add it to report - this is done only before sending report to server
-                //- no need to save/load such data in the repository
-                lastReport.miscData =
-                    MiscData(Utils.getPackage(context), Utils.getVersionName(context))
+                //add the miscData before sending to server
+                //no need to save/load such data in the repository
+                lastReport.miscData = miscData
                 val response = reportApi.sendReport(lastReport).execute()
                 if (response.isSuccessful) {
                     //after sending the report to the server we can remove it from our local repository
