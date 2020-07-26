@@ -7,7 +7,5 @@ import retrofit2.http.POST
 
 internal interface ReportApi {
     @POST("/api/sendreport")
-    fun sendReport(@Body report: Report): Call<ReportResponse>
+    fun sendReport(@Body report: Report): Call<Void>
 }
-
-internal data class ReportResponse(val success: Boolean)

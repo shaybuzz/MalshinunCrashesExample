@@ -5,11 +5,9 @@ import android.os.Handler
 import android.util.Log
 import com.malshinun_crashes.model.MiscData
 import com.malshinun_crashes.remote.ReportApi
-import com.malshinun_crashes.remote.ReportResponse
 import com.malshinun_crashes.repository.ReportRepository
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 internal class SenderManger(
     private val context: Context,
@@ -18,6 +16,7 @@ internal class SenderManger(
     private val interval: Long
 ) : Runnable {
     private val TAG = SenderManger::class.java.simpleName
+    private val executorService: ExecutorService = Executors.newFixedThreadPool(1)
     private val handler = Handler()
     private var isCanceled = false
 
@@ -33,50 +32,29 @@ internal class SenderManger(
 
     override fun run() {
         if (!isCanceled) {
-            sendReport()
+            executorService.execute {
+                sendReportTask()
+            }
             handler.postDelayed(this@SenderManger, interval)
         }
     }
 
-    private fun sendReport() {
+    private fun sendReportTask() {
         val report = reportRepository.getReport()
         report?.let { lastReport ->
-            //init misc data and add it to report - this is done only before sending report to server
-            //- no need to save/load such data in the repository
-            lastReport.miscData =
-                MiscData(Utils.getPackage(context), Utils.getVersionName(context))
             try {
-                Log.d(TAG, "####\n\nfound crash report to send $report\n\n####")
-                reportApi.sendReport(lastReport).enqueue(object : Callback<ReportResponse> {
-                    override fun onFailure(call: Call<ReportResponse>, t: Throwable) {
-                        Log.e(TAG, "failed sending report ${t.message}")
-                    }
-
-                    override fun onResponse(
-                        call: Call<ReportResponse>,
-                        response: Response<ReportResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            response.body()?.let {
-                                if (it.success) {
-                                    //after sending the report to the server we can remove it from our local repository
-                                    reportRepository.delete(lastReport)
-                                } else {
-                                    Log.e(
-                                        TAG,
-                                        "Got response from server - Sending was not successful"
-                                    )
-                                }
-                            } ?: run() {
-                                Log.e(TAG, "Sending was not successful - Body is null")
-                            }
-                        } else {
-                            Log.e(TAG, "Sending was not successful")
-                            //testing delete on error
-                            //reportRepository.delete(lastReport)
-                        }
-                    }
-                })
+                //init misc data and add it to report - this is done only before sending report to server
+                //- no need to save/load such data in the repository
+                lastReport.miscData =
+                    MiscData(Utils.getPackage(context), Utils.getVersionName(context))
+                val response = reportApi.sendReport(lastReport).execute()
+                if (response.isSuccessful) {
+                    //after sending the report to the server we can remove it from our local repository
+                    reportRepository.delete(lastReport)
+                } else {
+                    //dont remove the report and try to send it next time
+                    Log.e(TAG, "failed sending report")
+                }
             } catch (e: Throwable) {
                 Log.e(TAG, "Some error while sending report to server ${e.message}")
             }
