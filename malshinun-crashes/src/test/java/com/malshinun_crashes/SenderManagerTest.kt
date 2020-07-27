@@ -1,5 +1,6 @@
 package com.malshinun_crashes
 
+import com.google.gson.Gson
 import com.malshinun_crashes.model.MiscData
 import com.malshinun_crashes.model.Report
 import com.malshinun_crashes.remote.ReportApi
@@ -26,6 +27,7 @@ class SenderManagerTest {
         MiscData("somename", "someVersion", "manufactor", "model", 1, "version")
     private val interval = 10000L
     private val report: Report = Report("some time", "some stackTrace")
+    private val reportJsonStr: String = Gson().toJson(report)
     private lateinit var senderManger: SenderManger
 
     @Before
@@ -36,17 +38,17 @@ class SenderManagerTest {
     @Test
     fun `check positive scenario`() {
         whenever(reportRepository.getReport()).doReturn(report)
-        whenever(reportApi.sendReport(report)).thenReturn(serverResponse)
+        whenever(reportApi.sendReport(reportJsonStr)).thenReturn(serverResponse)
         whenever(serverResponse.execute()).thenReturn(Response.success<Void>(null))
         senderManger.sendReportTask()
-        verify(reportApi).sendReport(report)
+        verify(reportApi).sendReport(reportJsonStr)
         verify(reportRepository).delete(report)
     }
 
     @Test
     fun `check server returns error scenario`() {
         whenever(reportRepository.getReport()).doReturn(report)
-        whenever(reportApi.sendReport(report)).thenReturn(serverResponse)
+        whenever(reportApi.sendReport(reportJsonStr)).thenReturn(serverResponse)
         whenever(serverResponse.execute()).thenReturn(
             Response.error(
                 400,
@@ -54,7 +56,7 @@ class SenderManagerTest {
             )
         )
         senderManger.sendReportTask()
-        verify(reportApi).sendReport(report)
+        verify(reportApi).sendReport(reportJsonStr)
         verify(reportRepository, never()).delete(report)
     }
 
@@ -62,7 +64,7 @@ class SenderManagerTest {
     fun `check repository return no report`() {
         whenever(reportRepository.getReport()).doReturn(null)
         senderManger.sendReportTask()
-        verify(reportApi, never()).sendReport(report)
+        verify(reportApi, never()).sendReport(reportJsonStr)
         verify(reportRepository, never()).delete(report)
     }
 

@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 internal object Network {
-    private val BASE_URL = "http://localhost:3000/"
+    private val BASE_URL = "http://localhost:9000/"
     val reportApi by lazy { retrofit.create(ReportApi::class.java) }
 
     private val okHttpClient = OkHttpClient.Builder().build()

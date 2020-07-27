@@ -2,6 +2,7 @@ package com.malshinun_crashes
 
 import android.os.Handler
 import android.util.Log
+import com.google.gson.Gson
 import com.malshinun_crashes.model.MiscData
 import com.malshinun_crashes.remote.ReportApi
 import com.malshinun_crashes.repository.ReportRepository
@@ -45,7 +46,7 @@ internal class SenderManger(
                 //add the miscData before sending to server
                 //no need to save/load such data in the repository
                 lastReport.miscData = miscData
-                val response = reportApi.sendReport(lastReport).execute()
+                val response = reportApi.sendReport(Gson().toJson(lastReport)).execute()
                 if (response.isSuccessful) {
                     //after sending the report to the server we can remove it from our local repository
                     reportRepository.delete(lastReport)
