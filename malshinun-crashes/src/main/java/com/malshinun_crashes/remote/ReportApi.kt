@@ -6,6 +6,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 internal interface ReportApi {
-    @POST("sendreport")
+    @POST("/api/report")
     fun sendReport(@Body report: Report): Call<Void>
 }
